@@ -37,7 +37,7 @@ end
 print("❌ Luck x25 not found. Server hopping...")
 
 -- Re-run this script on next join
-queue_on_teleport("loadstring(game:HttpGet('https://pastebin.com/raw/YOUR_SCRIPT_HERE'))()")
+queue_on_teleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/Untix-Hub/1232/refs/heads/main/farm'))()")
 
 -- Random hop to any public server
 TeleportService:Teleport(PlaceId, LocalPlayer)
