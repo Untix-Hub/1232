@@ -1,0 +1,43 @@
+local TeleportService = game:GetService("TeleportService")
+local HttpService = game:GetService("HttpService")
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local PlaceId = game.PlaceId
+
+-- Function to check for Luck x25 in Rifts
+local function hasLuck25()
+    local rifts = workspace:FindFirstChild("Rendered") and workspace.Rendered:FindFirstChild("Rifts")
+    if not rifts then return false end
+
+    for _, v in ipairs(rifts:GetChildren()) do
+        local success, result = pcall(function()
+            local icon = v:FindFirstChild("Display") and v.Display:FindFirstChild("SurfaceGui") and v.Display.SurfaceGui:FindFirstChild("Icon")
+            if icon and icon:FindFirstChild("Luck") then
+                if icon.Luck.Text:find("x25") then
+                    warn("✅ Found Luck x25 at:", v.Name)
+                    return true
+                end
+            end
+            return false
+        end)
+        if success and result then return true end
+    end
+
+    return false
+end
+
+-- ✅ Main logic
+print("🔍 Checking for Luck x25...")
+
+if hasLuck25() then
+    print("🎯 Luck x25 found. Stopping.")
+    return
+end
+
+print("❌ Luck x25 not found. Server hopping...")
+
+-- Re-run this script on next join
+queue_on_teleport("loadstring(game:HttpGet('https://pastebin.com/raw/YOUR_SCRIPT_HERE'))()")
+
+-- Random hop to any public server
+TeleportService:Teleport(PlaceId, LocalPlayer)
