@@ -4,52 +4,41 @@ local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local PlaceId = game.PlaceId
 
--- Function to scan all Rifts and find x25 eggs
-local function findLuck25()
+-- Function to check for Luck x25 in Rifts
+local function hasLuck25()
     local rifts = workspace:FindFirstChild("Rendered") and workspace.Rendered:FindFirstChild("Rifts")
     if not rifts then return false end
 
-    local found = 0
-    local total = #rifts:GetChildren()
-
     for _, v in ipairs(rifts:GetChildren()) do
         local success, result = pcall(function()
-            local display = v:FindFirstChild("Display")
-            local gui = display and display:FindFirstChild("SurfaceGui")
-            local icon = gui and gui:FindFirstChild("Icon")
-            local luck = icon and icon:FindFirstChild("Luck")
-            local timer = icon and icon:FindFirstChild("Timer")
-
-            if luck and luck.Text:find("x25") then
-                found += 1
-                warn("✅ x25 Egg:", v.Name, "| Time left:", timer and timer.Text or "unknown")
+            local icon = v:FindFirstChild("Display") and v.Display:FindFirstChild("SurfaceGui") and v.Display.SurfaceGui:FindFirstChild("Icon")
+            if icon and icon:FindFirstChild("Luck") then
+                if icon.Luck.Text:find("x25") then
+                    warn("✅ Found Luck x25 at:", v.Name)
+                    return true
+                end
             end
+            return false
         end)
+        if success and result then return true end
     end
 
-    if found > 0 then
-        print(string.format("🎉 Found %d x25 Eggs out of %d", found, total))
-        if found == total then
-            print("💯 All Rifts are x25!")
-        end
-        return true
-    else
-        return false
-    end
+    return false
 end
 
 -- ✅ Main logic
-print("🔍 Scanning for Luck x25...")
+print("🔍 Checking for Luck x25...")
 
-if findLuck25() then
-    print("🎯 Luck x25 detected. Script ends.")
+if hasLuck25() then
+    print("🎯 Luck x25 found. Stopping.")
     return
 end
 
-print("❌ No x25 found. Hopping to another server...")
+print("❌ Luck x25 not found. Server hopping...")
 
 -- Re-run this script on next join
 queue_on_teleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/Untix-Hub/1232/refs/heads/main/farm'))()")
 
--- Random hop
+-- Random hop to any public server
 TeleportService:Teleport(PlaceId, LocalPlayer)
+task.wait(5)
